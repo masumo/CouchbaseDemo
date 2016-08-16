@@ -24,11 +24,14 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
     Context context;
     List<Business> dataSet;
     Database database;
+    List<Business> dataCopy;
 
     public BusinessAdapter(Context context, List<Business> dataSet, Database database) {
         this.context = context;
         this.dataSet = dataSet;
         this.database = database;
+        dataCopy = new ArrayList<>();
+        dataCopy.addAll(dataSet); // copy of dataset needed for filtering
     }
 
     @Override
@@ -49,6 +52,24 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.ViewHo
     @Override
     public int getItemCount() {
         return dataSet.size();
+    }
+
+    public void filter(String text) {
+        if(text.isEmpty()){
+            dataSet.clear();
+            dataSet.addAll(dataCopy);
+        } else{
+            ArrayList<Business> result = new ArrayList<>();
+            text = text.toLowerCase();
+            for(Business item: dataCopy){
+                if(item.getName().toLowerCase().contains(text) || item.getKBLI().toLowerCase().contains(text)){
+                    result.add(item);
+                }
+            }
+            dataSet.clear();
+            dataSet.addAll(result);
+        }
+        notifyDataSetChanged();
     }
 
 
